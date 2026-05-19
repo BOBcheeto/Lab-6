@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Airbnb AI Systems Analysis — Ryder Chase</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --coral: #FF5A5F;
+  --coral-light: #FF7E82;
+  --coral-dim: #fff0f0;
+  --dark: #1a1a1a;
+  --mid: #444;
+  --muted: #888;
+  --border: #e8e8e8;
+  --bg: #f9f8f6;
+  --white: #ffffff;
+  --green: #00A699;
+  --gold: #FC642D;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--dark); font-size:15px; line-height:1.7; }
+
+/* HERO */
+.hero { background:var(--white); border-bottom:1px solid var(--border); padding:60px 0 44px; position:relative; overflow:hidden; }
+.hero::before { content:''; position:absolute; top:-80px; right:-80px; width:360px; height:360px; background:radial-gradient(circle,rgba(255,90,95,.08) 0%,transparent 70%); pointer-events:none; }
+.hero-inner { max-width:900px; margin:0 auto; padding:0 32px; }
+.eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:11px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--coral); margin-bottom:18px; }
+.eyebrow span { display:inline-block; width:24px; height:1px; background:var(--coral); }
+h1 { font-family:'DM Serif Display',serif; font-size:clamp(26px,4vw,40px); line-height:1.15; color:var(--dark); margin-bottom:10px; }
+h1 em { font-style:italic; color:var(--coral); }
+.hero-meta { display:flex; align-items:center; gap:14px; margin-top:18px; flex-wrap:wrap; }
+.hero-name { font-size:15px; font-weight:600; }
+.tag { font-size:12px; color:var(--muted); padding:3px 10px; border:1px solid var(--border); border-radius:20px; }
+
+/* LAYOUT */
+.wrap { max-width:1120px; margin:0 auto; padding:44px 32px 80px; display:grid; grid-template-columns:1fr 296px; gap:40px; align-items:start; }
+@media(max-width:800px){ .wrap{grid-template-columns:1fr;} .sidebar{order:-1;} }
+
+/* EXEC SUMMARY */
+.exec { background:var(--dark); color:var(--white); border-radius:12px; padding:30px 34px; margin-bottom:32px; position:relative; overflow:hidden; }
+.exec::after { content:''; position:absolute; bottom:-28px; right:-28px; width:160px; height:160px; border-radius:50%; background:rgba(255,90,95,.1); pointer-events:none; }
+.exec-lbl { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--coral-light); margin-bottom:12px; }
+.exec p { font-size:14.5px; line-height:1.75; color:rgba(255,255,255,.84); }
+.exec strong { color:#fff; font-weight:500; }
+
+/* CARDS */
+.card { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:30px 34px; margin-bottom:22px; transition:box-shadow .2s; }
+.card:hover { box-shadow:0 4px 22px rgba(0,0,0,.07); }
+.card-head { display:flex; align-items:flex-start; gap:14px; margin-bottom:18px; }
+.icon { flex-shrink:0; width:38px; height:38px; background:var(--coral-dim); border-radius:9px; display:flex; align-items:center; justify-content:center; font-size:17px; }
+.sec-num { font-size:10px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin-bottom:3px; }
+h2 { font-family:'DM Serif Display',serif; font-size:19px; line-height:1.2; color:var(--dark); }
+.card p { color:var(--mid); margin-bottom:13px; font-size:14.5px; }
+.card p:last-child { margin-bottom:0; }
+
+/* SUBSECTIONS */
+.sub { margin-bottom:18px; }
+.sub h3 { font-size:12px; font-weight:600; color:var(--dark); margin-bottom:7px; text-transform:uppercase; letter-spacing:.07em; }
+
+/* ANALYSIS */
+.analysis { margin-top:18px; border-top:1px solid var(--border); padding-top:18px; }
+.a-lbl { font-size:10px; font-weight:700; letter-spacing:.13em; text-transform:uppercase; color:var(--coral); margin-bottom:9px; display:flex; align-items:center; gap:6px; }
+.a-lbl::after { content:''; flex:1; height:1px; background:var(--coral-dim); }
+.analysis p { font-size:14px; color:var(--mid); font-style:italic; line-height:1.7; }
+
+/* STATS */
+.stats { display:flex; gap:14px; margin:18px 0; flex-wrap:wrap; }
+.stat { flex:1; min-width:120px; background:var(--bg); border-radius:10px; padding:13px 16px; border:1px solid var(--border); }
+.stat .v { font-family:'DM Serif Display',serif; font-size:24px; line-height:1; margin-bottom:4px; }
+.stat .v.r { color:var(--coral); }
+.stat .v.g { color:var(--green); }
+.stat .l { font-size:11px; color:var(--muted); font-weight:500; }
+
+/* TABLE */
+table { width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; }
+th { text-align:left; padding:8px 11px; background:var(--bg); color:var(--muted); font-weight:600; font-size:11px; text-transform:uppercase; letter-spacing:.06em; border-bottom:1px solid var(--border); }
+td { padding:9px 11px; border-bottom:1px solid var(--border); color:var(--mid); }
+tr:last-child td { border-bottom:none; }
+.win { color:var(--green); font-weight:600; }
+.bkd { color:var(--green); }
+.emp { color:var(--muted); }
+
+/* TEMPLATE BOX */
+.tpl { background:var(--bg); border:1px solid var(--border); border-left:3px solid var(--coral); border-radius:8px; padding:18px 22px; margin:14px 0; font-size:13.5px; color:var(--mid); line-height:1.75; }
+.ph { background:rgba(255,90,95,.1); color:var(--coral); border-radius:3px; padding:0 3px; font-weight:500; }
+.tpl ul { margin:9px 0 9px 18px; }
+.tpl ul li { margin-bottom:3px; }
+
+/* LISTING */
+.listing { background:#1a1a1a; color:rgba(255,255,255,.84); border-radius:10px; padding:22px 26px; margin:14px 0; font-size:13.5px; line-height:1.8; }
+.listing-title { font-family:'DM Serif Display',serif; font-size:17px; color:#fff; margin-bottom:12px; padding-bottom:11px; border-bottom:1px solid rgba(255,255,255,.1); }
+
+/* RISKS */
+.risk { display:flex; gap:10px; margin-bottom:9px; align-items:flex-start; }
+.rbadge { flex-shrink:0; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:3px 7px; border-radius:4px; margin-top:2px; }
+.rbadge.h { background:rgba(255,90,95,.12); color:var(--coral); }
+.rbadge.m { background:rgba(252,100,45,.12); color:var(--gold); }
+.rbadge.l { background:rgba(0,166,153,.12); color:var(--green); }
+.rtext { font-size:13.5px; color:var(--mid); }
+
+/* VERDICT */
+.verdict { background:linear-gradient(135deg,#1a1a1a 0%,#2d1f1f 100%); border-radius:10px; padding:26px 30px; margin-bottom:20px; border:1px solid #333; }
+.v-lbl { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--coral-light); margin-bottom:10px; }
+.verdict p { color:rgba(255,255,255,.82); font-size:14.5px; line-height:1.75; margin-bottom:11px; }
+.verdict p:last-child { margin-bottom:0; }
+.verdict strong { color:#fff; font-weight:500; }
+
+/* SIDEBAR */
+.findings { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:22px 22px 18px; position:sticky; top:24px; }
+.f-lbl { font-size:10px; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--coral); margin-bottom:14px; }
+.fi { display:flex; gap:11px; margin-bottom:14px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+.fi:last-child { border-bottom:none; margin-bottom:0; padding-bottom:0; }
+.fdot { flex-shrink:0; width:7px; height:7px; border-radius:50%; background:var(--coral); margin-top:7px; }
+.ft { font-size:13px; line-height:1.6; color:var(--mid); }
+.ft strong { display:block; color:var(--dark); font-weight:600; margin-bottom:2px; font-size:13px; }
+
+/* FOOTER */
+footer { border-top:1px solid var(--border); background:var(--white); padding:26px 32px; }
+.foot { max-width:900px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; }
+.foot-name { font-family:'DM Serif Display',serif; font-size:16px; }
+.foot-links { display:flex; gap:18px; }
+.foot-links a { font-size:13px; color:var(--muted); text-decoration:none; transition:color .2s; }
+.foot-links a:hover { color:var(--coral); }
+.foot-r { font-size:12px; color:var(--muted); }
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="eyebrow"><span></span>Case Study · Systems Analysis</div>
+    <h1>Airbnb AI Systems Analysis:<br><em>New Host Evaluation</em> — Valencia, Spain</h1>
+    <div class="hero-meta">
+      <span class="hero-name">Ryder Chase</span>
+      <span class="tag">MIS 432 · AI in Business · Western</span>
+      <span class="tag">Systems Analysis Intern, Airbnb</span>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+
+  <!-- EXEC SUMMARY -->
+  <div class="exec">
+    <div class="exec-lbl">Executive Summary</div>
+    <p>This case study evaluates <strong>six of Airbnb's core AI systems</strong> — matching, embedding &amp; positioning, smart pricing, support escalation, GenAI content, and regulatory risk — through the lens of a real host decision: Elena, a 2-bedroom apartment owner in Ruzafa, Valencia. Across every evaluation, a consistent pattern emerged: <strong>the platform's AI optimizes for booking volume, not host income</strong>, and the controls hosts believe they have are narrower than they appear. The analysis concludes with a clear recommendation — <strong>long-term rental at €900/month as a baseline</strong>, with selective Airbnb use during peak season only if Valencia's regulatory environment holds.</p>
+  </div>
+
+  <!-- S1: MATCHING -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">🔍</div>
+      <div>
+        <div class="sec-num">Section 01</div>
+        <h2>Matching System Evaluation</h2>
+      </div>
+    </div>
+    <div class="sub">
+      <h3>Why Manual Matching Was Hard</h3>
+      <p>Manual matching was harder than expected because surface-level descriptions don't cleanly translate into guest fit. Finding the right pairing required hunting for overlapping keywords and sometimes making assumptions — for example, inferring that a guest mentioning "quiet evenings" probably wouldn't suit a listing that emphasized nightlife proximity, even if neither said so explicitly. The signal was buried, inconsistent, and easy to misread.</p>
+    </div>
+    <div class="sub">
+      <h3>How Airbnb's AI Does It Better</h3>
+      <p>Airbnb's AI sidesteps that problem entirely. Instead of parsing what listings say, it watches what millions of guests actually do — what they click, how long they hover, and what they book after browsing similar properties. A guest who consistently books walkable urban apartments under €80/night with high review counts telegraphs their preferences through behavior far more precisely than any written profile could. Behavioral data is honest in a way self-reported descriptions aren't.</p>
+    </div>
+    <div class="sub">
+      <h3>What This Means for Elena</h3>
+      <p>If the algorithm decides who even sees her listing, her control is limited to inputs — photos, keywords, pricing, response rate — while the actual distribution happens inside a black box she can't audit or appeal. She's essentially a supplier on someone else's marketplace. The TikTok parallel holds: creators can optimize captions, but the algorithm decides reach. Businesses built on top of platforms can scale fast, but they're fragile.</p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>The matching exercise made clear that the most useful information isn't in the listing text — it's in what guests do after they arrive on the platform. That's a structural advantage for Airbnb's AI that no individual host can replicate. Elena can influence how she's perceived; she can't control who the algorithm sends her.</p>
+    </div>
+  </div>
+
+  <!-- S2: EMBEDDING -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">📍</div>
+      <div>
+        <div class="sec-num">Section 02</div>
+        <h2>Embedding &amp; Positioning Analysis</h2>
+      </div>
+    </div>
+    <div class="sub">
+      <h3>Elena's Real Competitors</h3>
+      <p>After repositioning Elena's listing toward the remote-work segment, her cluster shifted to include the 1BR Loft (€65), Boutique Studio (€58), and Studio El Carmen (€52) — work-friendly, well-photographed spaces that remote workers actively compare and book together. The Boutique Studio is the sharpest competitive threat: at €58 it undercuts Elena on price and likely wins on perceived value unless she differentiates on space (2 bedrooms is a genuine advantage) or amenities.</p>
+    </div>
+    <div class="sub">
+      <h3>Why This Segment</h3>
+      <p>Remote workers and longer-stay couples book more nights per reservation, cancel less frequently, and generate steadier income than weekend vacation travelers. For a 2-bedroom in Ruzafa — a walkable, café-dense neighborhood — this positioning plays to the apartment's natural strengths without requiring major reinvestment.</p>
+    </div>
+    <div class="sub">
+      <h3>The Risk</h3>
+      <p>This positioning effectively filters out short-stay family travelers and tourists, who represent the highest nightly rates but also the most flexible demand. In Valencia's slower winter months (November–February), remote workers may already be locked into leases elsewhere, while vacation travelers dry up entirely — precisely when Elena needs cash flow most.</p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>The embedding exercise revealed that Airbnb's AI doesn't care about physical features — it groups listings by who books them. Repositioning isn't about changing the apartment; it's about changing the signal you send to the algorithm. The risk is that optimizing for one segment quietly closes the door on others.</p>
+    </div>
+  </div>
+
+  <!-- S3: SMART PRICING -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">💰</div>
+      <div>
+        <div class="sec-num">Section 03</div>
+        <h2>Smart Pricing Evaluation</h2>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v r">€425</div><div class="l">My Manual Revenue</div></div>
+      <div class="stat"><div class="v">€375</div><div class="l">Smart Pricing Revenue</div></div>
+      <div class="stat"><div class="v g">+€50</div><div class="l">Manual Advantage</div></div>
+    </div>
+    <table>
+      <thead><tr><th>Scenario</th><th>Smart Pricing</th><th>My Price</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Normal weekday</td><td>€85</td><td>€90</td><td class="emp">Empty</td></tr>
+        <tr><td>Weekend</td><td>€115</td><td>€120</td><td class="bkd">Booked</td></tr>
+        <tr><td>Festival week</td><td>€145</td><td class="win">€140</td><td class="bkd">Booked</td></tr>
+        <tr><td>Last-minute vacancy</td><td>€55</td><td>€62</td><td class="bkd">Booked</td></tr>
+        <tr><td>Winter low season</td><td>€58</td><td>€55</td><td class="emp">Empty</td></tr>
+      </tbody>
+    </table>
+    <div class="sub" style="margin-top:16px;">
+      <h3>When to Trust Smart Pricing</h3>
+      <p>The algorithm earns its keep on high-volatility nights. Festival week and last-minute vacancy are exactly where real-time demand data matters — Smart Pricing read both correctly. Elena should lean on it during peak periods, major local events, and any night where she doesn't have specific information the algorithm wouldn't.</p>
+    </div>
+    <div class="sub">
+      <h3>The Conflict of Interest</h3>
+      <p>Smart Pricing optimizes for bookings, not Elena's net income. Every booking generates platform fees for Airbnb. Elena should treat it as a useful but conflicted advisor — good at reading the market, not designed to protect her margin.</p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>My €50 advantage came from a single festival-week call. The real lesson isn't that manual pricing wins — it's that Smart Pricing and local knowledge are different tools. The annual math is more damning than any single night: projected €8,000–€9,000 under Valencia's 90-day cap still trails a long-term tenant at €10,800.</p>
+    </div>
+  </div>
+
+  <!-- S4: SUPPORT -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">🎧</div>
+      <div>
+        <div class="sec-num">Section 04</div>
+        <h2>Support Escalation Response</h2>
+      </div>
+    </div>
+    <p>Diagnosed an angry host complaint — Maria's Saturday rate dropped to €62 from an expected premium — and built both a direct response and a reusable support template. The pricing formula: Base (€82) − Winter (€15) + Saturday (€18) − Last-minute (€18) − Oversupply (€5) = €62.</p>
+    <div class="sub" style="margin-top:16px;"><h3>Reusable Support Template</h3></div>
+    <div class="tpl">
+      <p>Hi <span class="ph">[Host name]</span>,</p>
+      <p style="margin-top:9px;">I hear you — seeing your rate drop on a night you expected to earn well is frustrating, especially when it feels like the system is working against you. Let me walk you through exactly how Smart Pricing arrived at that number.</p>
+      <p style="margin-top:9px;">Smart Pricing combines six live inputs to set your rate:</p>
+      <ul>
+        <li><strong>Base rate</strong> — your starting price</li>
+        <li><strong>Season</strong> — demand shifts by time of year</li>
+        <li><strong>Day of week</strong> — weekends typically get a premium</li>
+        <li><strong>Lead time</strong> — last-minute dates often signal weaker demand</li>
+        <li><strong>Local events</strong> — festivals, conferences, and holidays push rates up</li>
+        <li><strong>Supply</strong> — how many similar listings are available right now</li>
+      </ul>
+      <p style="margin-top:9px;">In your case: your base rate was €<span class="ph">[X]</span>. <span class="ph">[Season]</span> adjusted it by €<span class="ph">[±X]</span>, <span class="ph">[day of week]</span> added €<span class="ph">[+X]</span>, but <span class="ph">[lead time / oversupply]</span> subtracted €<span class="ph">[X]</span>, bringing the final price to €<span class="ph">[Y]</span>.</p>
+      <p style="margin-top:9px;"><strong>Smart Pricing is a suggestion, not a rule.</strong> You can override it any time from your pricing dashboard — no approval needed.</p>
+      <p style="margin-top:9px;"><span class="ph">[Agent name]</span></p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>The six-factor breakdown turns an opaque algorithm into a legible equation. The template works because it replaces "the system did this" with "here is the math." Hosts feel less antagonized when they can see the calculation — even if they disagree with it. The override reminder is critical: it restores a sense of agency.</p>
+    </div>
+  </div>
+
+  <!-- S5: GENAI CONTENT -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">✍️</div>
+      <div>
+        <div class="sec-num">Section 05</div>
+        <h2>GenAI Content Audit</h2>
+      </div>
+    </div>
+    <p>Used Claude to draft multiple versions of Elena's listing description, evaluated each for tone and audience fit, and iterated toward a final version targeting digital nomads. The best-performing listing came from editing AI output rather than accepting the first generic draft.</p>
+    <div class="listing">
+      <div class="listing-title">Ruzafa Work &amp; Rooftop | Fast WiFi, 10min Beach</div>
+      <p>Two bedrooms, a proper desk, and wifi that actually holds up on video calls. Ruzafa is right outside — one of Valencia's best neighborhoods for coffee shops, food, and not feeling like a tourist.</p>
+      <p style="margin-top:9px;">The setup: gigabit wifi, dedicated workspace, renovated kitchen for real cooking, and a rooftop terrace when you need to step away from the screen. The beach is 10 minutes on foot for the same reason.</p>
+      <p style="margin-top:9px;">Stays a week or longer work really well here — the neighborhood rewards it. Valencia's bike infrastructure is excellent and you won't need a car.</p>
+      <p style="margin-top:9px;">Good fit if you're working European hours, want two rooms so work and sleep stay separate, or just need a home base that doesn't feel like a hotel. Available year-round.</p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>The first AI draft was polished but generic — it could have been any apartment in any European city. The key revision was specificity: "wifi that holds up on video calls" outperforms "fast wifi" for a remote worker audience. GenAI produces a capable first draft; the host's context and voice is what makes it convert. The algorithm positions the listing — the copy closes the guest.</p>
+    </div>
+  </div>
+
+  <!-- S6: REGULATORY -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">⚖️</div>
+      <div>
+        <div class="sec-num">Section 06</div>
+        <h2>Regulatory Risk Assessment</h2>
+      </div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="v r">€9,000</div><div class="l">Max Airbnb (90-day cap)</div></div>
+      <div class="stat"><div class="v g">€10,800</div><div class="l">Long-term tenant (annual)</div></div>
+      <div class="stat"><div class="v">€6,000</div><div class="l">If cap → 60 days</div></div>
+    </div>
+    <div class="sub">
+      <h3>Regulatory Trajectory</h3>
+      <p>The directional evidence across comparable markets is consistent: regulation tightens, it does not loosen. Barcelona is phasing out short-term rentals entirely. Berlin's enforcement returned 8,100+ apartments to the long-term market, with fines reaching €500,000. Mexico City is tracking a similar displacement backlash curve. Valencia's 42% rent increase since 2015 — alongside 12,000 active listings — creates the same political conditions that preceded stricter action elsewhere.</p>
+    </div>
+    <div class="sub">
+      <h3>Downside Scenarios</h3>
+      <div class="risk"><span class="rbadge h">High</span><span class="rtext">Cap tightens to 60 days → max €6,000/year, 44% below long-term income</span></div>
+      <div class="risk"><span class="rbadge h">High</span><span class="rtext">Full ban (Barcelona model) → €0 Airbnb revenue + potential permit penalties</span></div>
+      <div class="risk"><span class="rbadge m">Med</span><span class="rtext">Permit renewal denied → forced exit mid-season with no income bridge</span></div>
+      <div class="risk"><span class="rbadge l">Low</span><span class="rtext">Status quo holds → Airbnb viable but still underperforms long-term on raw revenue</span></div>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>Assuming the 90-day cap holds is not a conservative assumption — it's an optimistic one. Every city in this analysis that faced similar political pressure moved toward restriction, not relaxation. For Elena, regulatory risk isn't a tail scenario; it's the base case that should anchor her decision.</p>
+    </div>
+  </div>
+
+  <!-- S7: RECOMMENDATION -->
+  <div class="card">
+    <div class="card-head">
+      <div class="icon">📋</div>
+      <div>
+        <div class="sec-num">Section 07</div>
+        <h2>Final Recommendation</h2>
+      </div>
+    </div>
+    <div class="verdict">
+      <div class="v-lbl">Recommendation to Elena</div>
+      <p>My recommendation is to <strong>sign a long-term tenant at €900/month as your baseline</strong>, and only consider Airbnb during Valencia's peak summer season if regulations still allow it and the numbers actually work that year.</p>
+      <p>The financial case for Airbnb is weaker than it looks. Valencia's 90-day cap limits you to €9,000 in maximum gross revenue — before Airbnb's fees, cleaning costs, and the inevitable empty nights. A reliable tenant puts €10,800 in your account with none of that friction.</p>
+      <p>The regulatory picture makes it worse. Barcelona is banning short-term rentals entirely. Berlin already forced 8,000+ apartments back onto the long-term market. Valencia has the same political pressure building. Betting on Airbnb is partly a bet that Valencia stays friendlier than its European neighbors.</p>
+      <p>There's also a <strong>control problem</strong>. The algorithm decides who sees your listing, Smart Pricing decides what you charge, and the platform can change either at any time. You'd be running a business where the most important levers aren't yours.</p>
+      <p>What you're giving up is real: peak summer nights in Ruzafa can earn €150 or more, and a great Airbnb year might outperform the tenant. That upside exists. But I'd take the €900, keep my sanity, and own the relationship with the person living there. The hybrid option is always available later.</p>
+    </div>
+    <div class="analysis">
+      <div class="a-lbl">My Analysis</div>
+      <p>Six evaluations pointed in the same direction. The matching system limits Elena's visibility control. Embedding optimization creates seasonal vulnerability. Smart Pricing has a structural conflict of interest. The support system reveals how little interpretability translates to host control. GenAI content requires human judgment to perform. And regulatory risk is asymmetric — the downside is a ban, not a mild reduction. The long-term tenant isn't the cautious choice. It's the analytically correct one.</p>
+    </div>
+  </div>
+
+</main>
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="findings">
+    <div class="f-lbl">Key Findings</div>
+    <div class="fi">
+      <div class="fdot"></div>
+      <div class="ft">
+        <strong>Revenue gap: Airbnb trails long-term</strong>
+        Under Valencia's 90-day cap, max Airbnb gross (€9,000) falls €1,800 short of a long-term tenant — before fees, vacancy, or operating costs.
+      </div>
+    </div>
+    <div class="fi">
+      <div class="fdot"></div>
+      <div class="ft">
+        <strong>Smart Pricing has a conflict of interest</strong>
+        The algorithm optimizes for booking probability, not host income. Every booking generates Airbnb platform fees — making it a useful but structurally misaligned advisor.
+      </div>
+    </div>
+    <div class="fi">
+      <div class="fdot"></div>
+      <div class="ft">
+        <strong>Regulation tightens, never loosens</strong>
+        Barcelona, Berlin, and Mexico City all moved toward restriction after similar political pressure. Valencia's 42% rent increase since 2015 signals the same trajectory.
+      </div>
+    </div>
+    <div class="fi">
+      <div class="fdot"></div>
+      <div class="ft">
+        <strong>Host control is narrower than it appears</strong>
+        Hosts influence inputs (photos, keywords, price floor) — but the algorithm controls distribution, pricing, and visibility. The most important levers belong to the platform.
+      </div>
+    </div>
+  </div>
+</aside>
+
+</div>
+
+<footer>
+  <div class="foot">
+    <span class="foot-name">Ryder Chase</span>
+    <div class="foot-links">
+      <a href="mailto:chaser5@wwu.edu">chaser5@wwu.edu</a>
+      <a href="https://www.linkedin.com/in/ryderchase" target="_blank">LinkedIn →</a>
+    </div>
+    <span class="foot-r">MIS 432 · AI in Business · Western</span>
+  </div>
+</footer>
+
+</body>
+</html>
